@@ -1,0 +1,117 @@
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+using namespace std;
+// initialising class Instagram
+class Instagram {
+private:
+    unordered_map<int, vector<int>> userPosts;
+    unordered_map<int, vector<int>> userFollowers;
+    unordered_map<int, vector<int>> userFollowing;
+    unordered_map<int, int> userStory;
+    unordered_map<int, vector<int>> userStories;
+
+public:
+// using constructor to add userid and postid
+    Instagram() {}
+
+    void post(int userId, int postId) {
+        userPosts[userId].insert(userPosts[userId].begin(), postId);
+    }
+// retrieves the post using userid
+    vector<int> feed(int userId) {
+        vector<int> result;
+
+        if (userPosts.find(userId) != userPosts.end()) {
+            result.insert(result.end(), userPosts[userId].begin(), userPosts[userId].end());
+        }
+
+        if (userFollowing.find(userId) != userFollowing.end()) {
+            for (const auto& follower : userFollowing[userId]) {
+                if (userPosts.find(follower) != userPosts.end()) {
+                    result.insert(result.end(), userPosts[follower].begin(), userPosts[follower].end());
+                }
+            }
+        }
+
+        // Sort posts in descending order by postId
+        sort(result.begin(), result.end(), greater<int>());
+
+        return result;
+    }
+// making the userid1 to follow userid2
+    void follow(int userId1, int userId2) {
+        userFollowing[userId1].push_back(userId2);
+        userFollowers[userId2].push_back(userId1);
+    }
+// making the userid1 to unfollow the userid2
+    void unfollow(int userId1, int userId2) {
+        auto it1 = find(userFollowing[userId1].begin(), userFollowing[userId1].end(), userId2);
+        if (it1 != userFollowing[userId1].end()) {
+            userFollowing[userId1].erase(it1);
+        }
+
+        auto it2 = find(userFollowers[userId2].begin(), userFollowers[userId2].end(), userId1);
+        if (it2 != userFollowers[userId2].end()) {
+            userFollowers[userId2].erase(it2);
+        }
+    }
+// only one one story being added by the single uerid
+    void upload_story(int userId, int storyId) {
+        userStory[userId] = storyId;
+        userStories[userId].insert(userStories[userId].begin(), storyId);
+    }
+// retrieving the list of feed in certain userid according to their posting time
+    vector<int> getStories(int userId) {
+        vector<int> result;
+
+        if (userStory.find(userId) != userStory.end()) {
+            result.push_back(userStory[userId]);
+        }
+
+        if (userFollowers.find(userId) != userFollowers.end()) {
+            for (const auto& follower : userFollowers[userId]) {
+                if (userStory.find(follower) != userStory.end()) {
+                    result.push_back(userStory[follower]);
+                }
+            }
+        }
+
+        return result;
+    }
+};
+
+int main() {
+    Instagram instagram;
+    instagram.post(1, 101);
+    instagram.post(2, 102);
+    instagram.follow(1, 2);
+    instagram.upload_story(1, 201);
+
+    cout << "User 1 Feed: ";
+    for (int post : instagram.feed(1)) {
+        cout << post << " ";
+    }
+    cout <<endl;
+
+    cout << "User 2 Feed: ";
+    for (int post : instagram.feed(1)) {
+        cout << post << " ";
+    }
+    cout <<endl;
+
+    cout << "User 1 Stories: ";
+    for (int story : instagram.getStories(2)) {
+        cout << story << " ";
+    }
+    cout << endl;
+
+    cout << "User 2 Stories: ";
+    for (int story : instagram.getStories(2)) {
+       cout << story << " ";
+    }
+    cout <<endl;
+
+    return 0;
+}

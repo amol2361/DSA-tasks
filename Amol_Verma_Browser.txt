@@ -1,0 +1,73 @@
+#include<bits/stdc++.h>
+using namespace std;
+// initialising browser class
+class browser{
+    private:
+    pair <pair<vector <string>,vector <string>>,string> tabs;
+    int current_tab;
+public:
+    // using constructor to browse homepage
+    browser(){
+        tabs.second=("www.homepage.com");
+        current_tab=0;
+    }
+    // using visit function to browse to next webpage
+    void visit(string url){
+        tabs.first.first.push_back(url);
+        tabs.first.second.clear();
+        cout<<"visited "<< url <<endl;
+    }
+    // using go_back function return back to the previous webpage
+    string go_back(int n){
+        vector <string> history=tabs.first.first;
+        if(n>=history.size()){
+            // checking if the input size of webpage is greator then the
+          //   size of the history then no further visit is possible also 
+        //   if it is there then erasing that current history
+            tabs.first.first.clear();
+            return "cannot go further to the homepage ";
+        }
+        // in else part we are resizing the size of history and returning the 
+        // the maximumpossible page we can return from of the previous visited webpage
+        else{
+            string url=history[history.size()-n];
+            history.resize(history.size()-n);
+            tabs.first.second.insert(tabs.first.second.begin(),tabs.first.first.end()-n+1,tabs.first.first.end());
+            history.erase(history.end()-n+1,history.end());
+            return url;
+        }
+    }
+    // to move forward to next webpage if 
+    string forward(int n){
+        vector <string> forward=tabs.first.second;
+        if(n>=forward.size()){
+            return "cannot go further after";
+        } 
+        //checking if the pages are fewer then inputed n then return to 
+        // maximum possible page u can have access of the history
+        else{
+            string url=forward[n-1];
+            tabs.first.first.insert(tabs.first.second.end(),forward.begin(),forward.begin()+n);
+            forward.erase(forward.begin(),forward.begin()+n);
+            return url;
+        }
+    }
+    // to change the current tab to other tab
+    void change_tabs(){
+        current_tab=(current_tab+1)%2;
+        cout<<"changed to tab"<< current_tab + 1 <<endl;
+    }
+};
+int main(){
+    // browsing multiple websites
+    browser browse;
+    browse.visit("www.google.com");
+    cout<< browse.go_back(2)<<endl;
+    browse.visit("ww.linkedin.com");
+    browse.visit("www.facebook.com");
+    cout<<browse.go_back(1)<<endl;
+    browse.change_tabs();
+    browse.visit("www.github.com");
+    cout<<browse.forward(2)<<endl;
+    return 0;
+}

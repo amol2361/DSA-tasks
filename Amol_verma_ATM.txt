@@ -1,0 +1,144 @@
+#include <bits/stdc++.h>
+using namespace std;
+// initialising class ATM
+class ATM
+{
+    vector<int> notes;
+    vector<int> money;
+    // using switch function to insert the notes in the notes vector
+    void getdenominationindex(int denomination)
+    {
+        switch (denomination)
+        {
+        case 10:
+            notes.push_back(denomination);
+            break;
+        case 20:
+            notes.push_back(denomination);
+            break;
+        case 50:
+            notes.push_back(denomination);
+            break;
+        case 100:
+            notes.push_back(denomination);
+            break;
+        case 200:
+            notes.push_back(denomination);
+            break;
+        case 500:
+            notes.push_back(denomination);
+            break;
+        default:
+            cout << "Invalid note" << endl;
+            break;
+        }
+    }
+
+public: 
+// Depositing notes in the increasing order of the specified Denominations given below
+    void deposite(const vector<int> &denominations)
+    {
+        for (int i = 0; i < denominations.size(); i++)
+        {
+            // cout<<denominations[i]<<endl;
+            getdenominationindex(denominations[i]);
+        }
+        cout << "amount deposited succesfully.... "<<endl;
+        cout<<"Displaying the notes that have been submitted:";
+        display();
+    }
+    // to display the notes that have been deposited currently
+    void display()
+    {
+        for (int note = 0; note < notes.size(); note++)
+        {
+            cout << notes[note] << endl;
+        }
+        cout << endl;
+    }
+    // to withdraw the amount in maximum to minimum format and stores it in 
+// withdrawdenomination vector
+    vector<int> withdraw(int amount)
+    {
+        int newamount = amount;
+        vector<int> withdrawDenominations(6, 0);
+        int Denominations[] = {500, 200, 100, 50, 20, 10};
+        for (int i = 0; i < 6; i++)
+        {
+            int noofnotes = 0;
+            noofnotes = newamount / (Denominations[i]);
+            // cout<<Denominations[i]<<" "<<noofnotes;
+            // withdrawDenominations[i++]=noofnotes;
+            if (noofnotes > withdrawDenominations[i])
+            {
+                withdrawDenominations[i] = noofnotes;
+            }
+            newamount -= noofnotes * Denominations[i];
+
+            // while (amount >= Denominations[i])
+            // {
+            //     amount -= Denominations[i];
+            //     withdrawDenominations[i]=Denominations[i];
+            // }
+        }
+        if (newamount == 0)
+        {
+            return withdrawDenominations;
+        }
+        else
+        {
+            return {-1};
+        }
+    }
+};
+int main()
+{
+    //  iniatilising an object to the ATM class
+    int Number, n;
+    ATM atm;
+    int Denominations[] = {500, 200, 100, 50, 20, 10};
+    int p;
+    cout << "Enter 1 for Depositing and 2 for Withdrawing ";
+    cin >> p;
+    // asking user to input their choice of withdrawing or depositing
+    if (p == 1)
+    {
+        cout << "Enter number of notes you are depositing: ";
+        cin >> Number;
+        vector<int> as;
+        for (int i = 0; i < Number; i++)
+        {
+            cin >> n;
+            as.push_back(n);
+        }
+        sort(as.begin(), as.end());
+        atm.deposite(as);
+    }
+    else
+    {
+        int Withdrawing_amount;
+        cout << "Enter the amount you want to withdraw :";
+        cin >> Withdrawing_amount;
+        vector<int> withdrawnDenomination = atm.withdraw(Withdrawing_amount);
+        if (withdrawnDenomination != vector<int>{-1})
+        {
+            cout << " Withdrawn amount : " << Withdrawing_amount;
+            cout << endl;
+        }
+        else
+        {
+            cout << "Money Can't withdraw ";
+        }
+        cout << "ATM notes after withdrawl : " << endl;
+        for (int i = 0; i < withdrawnDenomination.size(); i++)
+        {
+            if (withdrawnDenomination[i] > 0)
+            {
+                cout << "number of" << Denominations[i] << "=" << withdrawnDenomination[i] << " " << endl;
+            }
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
